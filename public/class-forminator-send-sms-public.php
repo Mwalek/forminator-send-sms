@@ -100,10 +100,4 @@ class Forminator_Send_Sms_Public {
 
 	}
 
-	public function collect_form_data($response ) {
-
-		$data = $_POST;
-
-	}
-
 }
