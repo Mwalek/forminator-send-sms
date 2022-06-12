@@ -37,6 +37,15 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'FORMINATOR_SEND_SMS_VERSION', '1.0.0' );
 
+ /*
+* The environment and accesss configurations
+*/
+
+$config = array(
+    'username' => 'something',
+    'password' => 'somethingelse',
+);
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-forminator-send-sms-activator.php
@@ -73,10 +82,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-forminator-send-sms.php';
  *
  * @since    1.0.0
  */
-function run_forminator_send_sms() {
+function run_forminator_send_sms($config) {
 
-	$plugin = new Forminator_Send_Sms();
-	$plugin->run();
+	$plugin = new Forminator_Send_Sms($config);
+	$plugin->run($config);
 
 }
-run_forminator_send_sms();
+run_forminator_send_sms($config);

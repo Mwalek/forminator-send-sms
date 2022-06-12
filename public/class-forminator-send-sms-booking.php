@@ -10,6 +10,8 @@
  * @subpackage Forminator_Send_Sms/public
  */
 
+
+
 /**
  * The booking/request functionality of the plugin.
  *
@@ -39,7 +41,9 @@ class Forminator_Send_Sms_Booking {
 	 */
 	private $version;
 
-	/**
+
+
+    /**
 	 * The submitted data.
 	 *
 	 * @since    1.0.0
@@ -55,13 +59,17 @@ class Forminator_Send_Sms_Booking {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $config ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
         $this->request_data = [];
+        //[$username, $password] = $config;
+        $this->show_data($config);
 
 	}
+
+    
 
     /**
 	 * Save all the data entered into the forminator form.
@@ -73,6 +81,12 @@ class Forminator_Send_Sms_Booking {
 
 		$this->request_data = $_POST;
         var_dump($this->request_data);
+
+	}
+
+    public function show_data($config) {
+
+        var_dump($config);
 
 	}
 

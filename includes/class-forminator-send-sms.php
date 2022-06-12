@@ -57,6 +57,24 @@ class Forminator_Send_Sms {
 	 */
 	protected $version;
 
+		/**
+	 * The BulkSMS username.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $version    The BulkSMS username for API connection.
+	 */
+	private $username;
+
+    /**
+	 * The BulkSMS password.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $version    The BulkSMS password for API connection.
+	 */
+	private $password;
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -66,21 +84,30 @@ class Forminator_Send_Sms {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
+	public function __construct($config) {
 		if ( defined( 'FORMINATOR_SEND_SMS_VERSION' ) ) {
 			$this->version = FORMINATOR_SEND_SMS_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'forminator-send-sms';
+		extract($config);
+		$this->username = $username;
+		$this->password = $password;
+		$this->rainbow($config);
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_booking_hooks();
+		$this->define_booking_hooks($config);
 
 	}
+
+	function rainbow($config) {
+		echo $this->username . '</br>' . $this->password;
+        //echo $this->username;
+    }
 
 	/**
 	 * Load the required dependencies for this plugin.
@@ -181,9 +208,9 @@ class Forminator_Send_Sms {
 
 	}
 
-	private function define_booking_hooks() {
+	private function define_booking_hooks($config) {
 
-		$plugin_booking = new Forminator_Send_Sms_Booking( $this->get_plugin_name(), $this->get_version() );
+		$plugin_booking = new Forminator_Send_Sms_Booking( $this->get_plugin_name(), $this->get_version(), $config );
 
 		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_booking, 'collect_form_data');
 		$this->loader->add_action( 'forminator_form_after_save_entry', $plugin_booking, 'collect_form_data');
