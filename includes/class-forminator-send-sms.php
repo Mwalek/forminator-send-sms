@@ -94,7 +94,6 @@ class Forminator_Send_Sms {
 		extract($config);
 		$this->username = $username;
 		$this->password = $password;
-		$this->rainbow($config);
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -103,11 +102,6 @@ class Forminator_Send_Sms {
 		$this->define_booking_hooks($config);
 
 	}
-
-	function rainbow($config) {
-		echo $this->username . '</br>' . $this->password;
-        //echo $this->username;
-    }
 
 	/**
 	 * Load the required dependencies for this plugin.

@@ -85,7 +85,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-forminator-send-sms.php';
 function run_forminator_send_sms($config) {
 
 	$plugin = new Forminator_Send_Sms($config);
-	$plugin->run($config);
+	$plugin->run();
 
 }
 run_forminator_send_sms($config);
