@@ -172,6 +172,8 @@ class Forminator_Send_Sms {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_public, 'collect_form_data');
+		$this->loader->add_action( 'forminator_form_after_save_entry', $plugin_public, 'collect_form_data');
 
 	}
 
