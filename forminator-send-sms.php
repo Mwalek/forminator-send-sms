@@ -25,6 +25,10 @@
  * Domain Path:       /languages
  */
 
+require __DIR__ . '/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -42,8 +46,8 @@ define( 'FORMINATOR_SEND_SMS_VERSION', '1.0.0' );
 */
 
 $config = array(
-    'username' => 'something',
-    'password' => 'somethingelse',
+    'username' => $_ENV['Username'],
+    'password' => $_ENV['Password'],
 );
 
 /**
