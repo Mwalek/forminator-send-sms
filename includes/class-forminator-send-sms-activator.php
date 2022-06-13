@@ -30,7 +30,27 @@ class Forminator_Send_Sms_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+		create_db();
 	}
 
+}
+
+function create_db() {
+
+	global $wpdb;
+	$charset_collate = $wpdb->get_charset_collate();
+	$table_name = $wpdb->prefix . 'custom_data';
+
+	$sql = "CREATE TABLE $table_name (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		name text(25) NOT NULL,
+		phone varchar(15) NOT NULL,
+		location varchar(2083) NOT NULL,
+		message text(500) NOT NULL,
+		UNIQUE KEY id (id)
+	) $charset_collate;";
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
 }

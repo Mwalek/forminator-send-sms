@@ -56,6 +56,7 @@ $config = array(
  */
 function activate_forminator_send_sms() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-forminator-send-sms-activator.php';
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	Forminator_Send_Sms_Activator::activate();
 }
 

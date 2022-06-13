@@ -64,8 +64,7 @@ class Forminator_Send_Sms_Booking {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
         $this->request_data = [];
-        //[$username, $password] = $config;
-        $this->show_data($config);
+        // $this->show_data($config);
 
 	}
 
@@ -80,7 +79,23 @@ class Forminator_Send_Sms_Booking {
 	public function collect_form_data($response ) {
 
 		$this->request_data = $_POST;
-        var_dump($this->request_data);
+        //var_dump($this->request_data);
+        $this->save_data($_POST);
+
+	}
+
+    public function save_data($data) {
+
+        global $wpdb;
+        $tablename = $wpdb->prefix.'custom_data';
+
+        $wpdb->insert($tablename, array(
+            'time' => date('Y-m-d H:i:s'),
+            'name' => $data['name-1'],
+            'phone' => $data['phone-1'],
+            'location' => $data['url-1'],
+            'message' => $data['textarea-1']
+        ));
 
 	}
 
