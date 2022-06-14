@@ -57,7 +57,7 @@ class Forminator_Send_Sms {
 	 */
 	protected $version;
 
-		/**
+	/**
 	 * The BulkSMS username.
 	 *
 	 * @since    1.0.0

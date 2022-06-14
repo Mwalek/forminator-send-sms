@@ -41,8 +41,6 @@ class Forminator_Send_Sms_Booking {
 	 */
 	private $version;
 
-
-
     /**
 	 * The submitted data.
 	 *
@@ -53,6 +51,24 @@ class Forminator_Send_Sms_Booking {
 	private $request_data;
 
 	/**
+	 * The BulkSMS username.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $version    The BulkSMS username for API connection.
+	 */
+	private $username;
+
+    /**
+	 * The BulkSMS password.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $version    The BulkSMS password for API connection.
+	 */
+	private $password;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -61,9 +77,12 @@ class Forminator_Send_Sms_Booking {
 	 */
 	public function __construct( $plugin_name, $version, $config ) {
 
+		extract($config);
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-        $this->request_data = [];
+		$this->username = $username;
+		$this->password = $password;
+		$this->request_data = [];
         // $this->show_data($config);
 
 	}
@@ -81,10 +100,11 @@ class Forminator_Send_Sms_Booking {
 		$this->request_data = $_POST;
         //var_dump($this->request_data);
         $this->save_data($_POST);
+		$this->prep_data($_POST);
 
 	}
 
-    public function save_data($data) {
+    private function save_data($data) {
 
         global $wpdb;
         $tablename = $wpdb->prefix.'custom_data';
@@ -99,9 +119,55 @@ class Forminator_Send_Sms_Booking {
 
 	}
 
-    public function show_data($config) {
+	private function prep_data($data) {
+		$name = $data['name-1'];
+		$phone_number = $data['phone-1'];
+		$location = $data['url-1'];
 
-        var_dump($config);
+		$seller_phone_number = '260953138973';  // 260767924824
+		$seller_message = "Hi! {$name} requested the Plumber service :). Location: {$location}";
+		$buyer_message = "Hi {$name}, thanks for using NchitoToday! We've received your booking and will be in touch soon. You can also reach us on Whatsapp, 0767924824.";
+
+		$messages = array(
+			array('from'=> 'NchitoToday', 'to'=> $seller_phone_number, 'body'=> $seller_message),
+			array('from'=> 'NchitoToday', 'to'=> $phone_number, 'body'=> $buyer_message)
+		);
+
+		$result = $this->send_data( json_encode($messages), 'https://api.bulksms.com/v1/messages?auto-unicode=true&longMessageMaxParts=30', $this->username, $this->password );
+
+	}
+
+	private function send_data($post_body, $url, $username, $password) {
+		$ch = curl_init( );
+		$headers = array(
+		'Content-Type:application/json',
+		'Authorization:Basic '. base64_encode("$username:$password")
+		);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt ( $ch, CURLOPT_URL, $url );
+		curl_setopt ( $ch, CURLOPT_POST, 1 );
+		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $post_body );
+		// Allow cUrl functions 20 seconds to execute
+		curl_setopt ( $ch, CURLOPT_TIMEOUT, 20 );
+		// Wait 10 seconds while trying to connect
+		curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 10 );
+		$output = array();
+		$output['server_response'] = curl_exec( $ch );
+		$curl_info = curl_getinfo( $ch );
+		$output['http_status'] = $curl_info[ 'http_code' ];
+		$output['error'] = curl_error($ch);
+		curl_close( $ch );
+		// if ($output['http_status'] == 201){
+		// 	error_log("Success! Message(s) sent. Status code: {$output['http_status']}.");
+		// } else {
+		// 	error_log("There was a problem sending your message(s). Status code: {$output['http_status']}.");
+		// }
+		return $output;
+	}
+
+    public function show_data($data) {
+
 
 	}
 
