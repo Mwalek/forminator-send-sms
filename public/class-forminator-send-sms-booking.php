@@ -46,7 +46,7 @@ class Forminator_Send_Sms_Booking {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $version    The data submitted in the form.
+	 * @var      array    $request_data    The data submitted in the form.
 	 */
 	private $request_data;
 
@@ -55,7 +55,7 @@ class Forminator_Send_Sms_Booking {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $version    The BulkSMS username for API connection.
+	 * @var      array    $username    The BulkSMS username for API connection.
 	 */
 	private $username;
 
@@ -64,9 +64,18 @@ class Forminator_Send_Sms_Booking {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $version    The BulkSMS password for API connection.
+	 * @var      array    $password    The BulkSMS password for API connection.
 	 */
 	private $password;
+
+	/**
+	 * The Form IDs.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $form_ids    The form IDs that will connect to the API.
+	 */
+	private $form_ids;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -83,6 +92,7 @@ class Forminator_Send_Sms_Booking {
 		$this->username = $username;
 		$this->password = $password;
 		$this->request_data = [];
+		$this->form_ids = [2592, 100];
         // $this->show_data($config);
 
 	}
@@ -98,9 +108,17 @@ class Forminator_Send_Sms_Booking {
 	public function collect_form_data($response ) {
 
 		$this->request_data = $_POST;
-        //var_dump($this->request_data);
+		error_log(print_r($this->request_data, true));
         $this->save_data($_POST);
-		$this->prep_data($_POST);
+		// Check if the submitted form in our list.
+		if(in_array($_POST['form_id'], $this->form_ids)) {
+			$this->prep_data($_POST);
+			error_log('The form IDs match');
+		} else {
+			error_log('The form IDs do NOT match');
+			return;
+
+		}
 
 	}
 
