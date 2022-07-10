@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Forminator Send SMS
  * Plugin URI:        https://mwale.me
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Instantly send custom form data via BulkSMS API.
  * Version:           1.0.0
  * Author:            Mwale Kalenga
  * Author URI:        https://mwale.me
