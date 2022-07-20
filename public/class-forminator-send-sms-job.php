@@ -113,13 +113,7 @@ class Forminator_Send_Sms_Job {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-forminator-send-sms-loader.php';
 
-		$maps_integration_path = WP_PLUGIN_DIR . "/maps-integration/maps-integration.php";
-
-		require_once $maps_integration_path;
-
 		$this->loader = new Forminator_Send_Sms_Loader();
-
-		$this->manage_locations = new Manage_Location();
 	}
 
 	public function collect_form_data($response) {
