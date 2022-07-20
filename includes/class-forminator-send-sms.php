@@ -99,7 +99,7 @@ class Forminator_Send_Sms {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_booking_hooks($config);
+		$this->define_job_hooks($config);
 
 	}
 
@@ -145,9 +145,9 @@ class Forminator_Send_Sms {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-forminator-send-sms-public.php';
 
 		/**
-		 * The class responsible for defining all actions related to bookings/requests
+		 * The class responsible for defining all actions related to jobs/requests
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-forminator-send-sms-booking.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-forminator-send-sms-job.php';
 
 		$this->loader = new Forminator_Send_Sms_Loader();
 
@@ -202,12 +202,12 @@ class Forminator_Send_Sms {
 
 	}
 
-	private function define_booking_hooks($config) {
+	private function define_job_hooks($config) {
 
-		$plugin_booking = new Forminator_Send_Sms_Booking( $this->get_plugin_name(), $this->get_version(), $config );
+		$plugin_job = new Forminator_Send_Sms_Job( $this->get_plugin_name(), $this->get_version(), $config );
 
-		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_booking, 'collect_form_data');
-		$this->loader->add_action( 'forminator_form_after_save_entry', $plugin_booking, 'collect_form_data');
+		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_job, 'collect_form_data');
+		$this->loader->add_action( 'forminator_form_before_save_entry', $plugin_job, 'collect_form_data');
 
 	}
 
