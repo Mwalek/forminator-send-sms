@@ -130,6 +130,8 @@ class Forminator_Send_Sms_Job {
 
 		$this->request_data = $_POST;
 
+		$this->custom_data = $custom_data;
+
 		$this->form_ids = $custom_data[3];
 
 		$this->username = $custom_data[4]['username'];
