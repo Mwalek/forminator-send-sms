@@ -80,8 +80,6 @@ class Forminator_Send_Sms_Job {
 	 */
 	private $form_ids;
 
-	public $manage_locations;
-
 	public $custom_data;
 
 	/**
