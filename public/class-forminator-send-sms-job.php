@@ -118,11 +118,24 @@ class Forminator_Send_Sms_Job {
 
 	public function collect_form_data($response) {
 
+		// Do nothing if no filter is added to the data preparation hook.
+		if (!has_filter('forminator_send_sms_prepare_form_data')) {
+			return;
+		}
+
 		$custom_data = apply_filters('forminator_send_sms_prepare_form_data', $_POST);
 
 		$this->request_data = $_POST;
 
 		$this->custom_data = $custom_data;
+
+		function associative_array(array $array) {
+			return count(array_filter(array_keys($array), 'is_string')) > 0;
+		}
+
+		if(associative_array($custom_data)) {
+			return;
+		}
 
 		$this->form_ids = $custom_data[3];
 
@@ -150,12 +163,16 @@ class Forminator_Send_Sms_Job {
 			return array_sum(array_map('is_string', $arr)) == count($arr);
 		}
 
-		foreach( $custom_data as $item ) {
-			if (is_array($item)) {
-				array_push($count, count($item));
-			} else {
-				array_push($count, null);
+		if(is_array($custom_data)) {
+			foreach( $custom_data as $item ) {
+				if (is_array($item)) {
+					array_push($count, count($item));
+				} else {
+					array_push($count, null);
+				}
 			}
+		} else {
+			return;
 		}
 
 		// Don't proceed if number of recipients doesn't matach templates supplied
