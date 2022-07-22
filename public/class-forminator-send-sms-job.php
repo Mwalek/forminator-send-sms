@@ -182,9 +182,9 @@ class Forminator_Send_Sms_Job {
 
 				// Check if all  phonenumbers should be used or only the first one
 				if (gettype($custom_data[0]) == "string") {
-					$arr = array('from'=> $custom_data[0], 'to'=> $custom_data[1][$i], 'body'=> $custom_data[2][$i]);
+					$arr = array('from'=> $custom_data[0], 'to'=> $custom_data[1][$i], 'body'=> $custom_data[2][$i], 'routingGroup'=> $custom_data[5]);
 				} else {
-					$arr = array('from'=> $custom_data[0][$i], 'to'=> $custom_data[1][$i], 'body'=> $custom_data[2][$i]);
+					$arr = array('from'=> $custom_data[0][$i], 'to'=> $custom_data[1][$i], 'body'=> $custom_data[2][$i], 'routingGroup'=> $custom_data[5]);
 				}
 
 				// Don't add $arr[] to $messages[] if it isn't made up entirely of strings.
