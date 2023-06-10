@@ -49,8 +49,9 @@ function create_db() {
 		location varchar(2083) NOT NULL,
 		request text(25) NOT NULL,
 		message text(500) NOT NULL,
-		msg_status smallint(1) NOT NULL,
+		msg_status bool NOT NULL,
 		msg_sent_at datetime NOT NULL,
+		form_id smallint(255) NOT NULL,
 		UNIQUE KEY id (id)
 	) $charset_collate;";
 

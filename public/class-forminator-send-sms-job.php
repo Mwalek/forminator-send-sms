@@ -244,6 +244,7 @@ class Forminator_Send_Sms_Job {
 				'location' => $data['hidden-1'],
 				'message'  => $data['textarea-1'],
 				'request'  => $data['radio-1'],
+				'form_id'  => $data['form_id'],
 			)
 		);
 
