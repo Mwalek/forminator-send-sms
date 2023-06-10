@@ -30,7 +30,11 @@ class Forminator_Send_Sms_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
+		self::unschedule_wp_cron_events();
+	}
 
+	public static function unschedule_wp_cron_events() {
+		wp_clear_scheduled_hook( 'forminator_send_sms_cron_hook' );
 	}
 
 }
