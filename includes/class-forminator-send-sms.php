@@ -183,9 +183,8 @@ class Forminator_Send_Sms {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'add_cron_intervals' );
-		add_action( 'fss_cron_hook', 'fss_cron_exec' );
-
+		add_filter( 'cron_schedules', 'add_cron_intervals' );
+		add_action( 'forminator_send_sms_cron_hook', 'forminator_send_sms_cron_exec' );
 	}
 
 	/**

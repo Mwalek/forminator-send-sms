@@ -14,18 +14,22 @@ require_once $maps_int . '/maps-integration.php';
 * The environment and accesss configurations
 */
 
-$config = array(
-	'username' => $_ENV['Username'],
-	'password' => $_ENV['Password'],
-);
+// add_action( 'wp_loaded', 'fss_setup_cron' );
 
-if ( ! wp_next_scheduled( 'fss_cron_hook' ) ) {
-	wp_schedule_event( time(), 'one_minute', 'fss_cron_hook' );
-}
+// function fss_setup_cron() {
+// if ( ! wp_next_scheduled( 'fss_cron_hook' ) ) {
+// wp_schedule_event( time(), 'five_minutes', 'fss_cron_hook' );
+// }
+// }
 
-function fss_cron_exec() {
+
+function forminator_send_sms_cron_exec() {
 
 	global $wpdb;
+	$config = array(
+		'username' => $_ENV['Username'],
+		'password' => $_ENV['Password'],
+	);
 
 	$tablename = $wpdb->prefix . 'forminator_send_sms_data';
 
@@ -40,7 +44,7 @@ function fss_cron_exec() {
 
 		if ( $row->msg_status ) {
 			ray( 'Message Group ID ' . $row->id . ' was already sent!' );
-			return;
+			continue;
 		}
 
 		$short_url = create_short_url( $row->location );
@@ -54,8 +58,6 @@ function fss_cron_exec() {
 		$row->location = $url;
 
 		$data = $location->prep_data( (array) $row );
-
-		ray( $data )->purple();
 
 		$response = $sms_job->collect_form_data_for_cron( $data );
 		ray( $response )->blue();

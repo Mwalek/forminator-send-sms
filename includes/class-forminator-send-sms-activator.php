@@ -30,31 +30,38 @@ class Forminator_Send_Sms_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		create_db();
+		self::create_db();
+		self::schedule_wp_cron_events();
 	}
 
-}
+	public static function create_db() {
 
-function create_db() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+		$table_name      = $wpdb->prefix . 'forminator_send_sms_data';
 
-	global $wpdb;
-	$charset_collate = $wpdb->get_charset_collate();
-	$table_name      = $wpdb->prefix . 'forminator_send_sms_data';
+		$sql = "CREATE TABLE $table_name (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			name text(25) NOT NULL,
+			phone varchar(15) NOT NULL,
+			location varchar(2083) NOT NULL,
+			request text(25) NOT NULL,
+			message text(500) NOT NULL,
+			msg_status bool NOT NULL,
+			msg_sent_at datetime NOT NULL,
+			form_id smallint(255) NOT NULL,
+			UNIQUE KEY id (id)
+		) $charset_collate;";
 
-	$sql = "CREATE TABLE $table_name (
-		id mediumint(9) NOT NULL AUTO_INCREMENT,
-		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		name text(25) NOT NULL,
-		phone varchar(15) NOT NULL,
-		location varchar(2083) NOT NULL,
-		request text(25) NOT NULL,
-		message text(500) NOT NULL,
-		msg_status bool NOT NULL,
-		msg_sent_at datetime NOT NULL,
-		form_id smallint(255) NOT NULL,
-		UNIQUE KEY id (id)
-	) $charset_collate;";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
 
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	dbDelta( $sql );
+	public static function schedule_wp_cron_events() {
+		if ( ! wp_next_scheduled( 'forminator_send_sms_cron_hook' ) ) {
+			wp_schedule_event( time(), 'five_minutes', 'forminator_send_sms_cron_hook' );
+		}
+	}
+
 }

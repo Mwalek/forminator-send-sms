@@ -120,12 +120,16 @@ class Forminator_Send_Sms_Job {
 
 	public function collect_form_data_for_cron( $data ) {
 
+		ray()->red()->measure();
+
 		$this->username = $data[4]['username'];
 
 		$this->password = $data[4]['password'];
 
 		$messages = $this->organize_data( $data );
 		$result   = $this->prepare_data( $messages );
+
+		ray()->red()->measure();
 
 		return $result;
 
@@ -136,6 +140,8 @@ class Forminator_Send_Sms_Job {
 	}
 
 	public function collect_form_data( $response ) {
+
+		ray()->orange()->measure();
 
 		// Do nothing if no filter is added to the data preparation hook.
 		if ( ! has_filter( 'forminator_send_sms_prepare_form_data' ) ) {
@@ -168,7 +174,10 @@ class Forminator_Send_Sms_Job {
 		if ( in_array( $_POST['form_id'], $this->form_ids ) ) {
 
 			$messages = $this->organize_data( $custom_data );
-			$result   = $this->prepare_data( $messages );
+			// Setting reslt to $this->prepare_data( $messages ) would send SMSs the instant the data is submitted.
+			$result = '';
+			ray()->orange()->measure();
+			return $result;
 
 		}
 
@@ -225,8 +234,6 @@ class Forminator_Send_Sms_Job {
 					error_log( 'Error: Message inputs should comprise of strings only.' );
 				}
 			}
-
-			ray( print_r( $messages, true ) );
 
 			return $messages;
 

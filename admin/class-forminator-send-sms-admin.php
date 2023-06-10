@@ -100,17 +100,21 @@ class Forminator_Send_Sms_Admin {
 
 	}
 
-	public function add_cron_intervals( $schedules ) {
-		$schedules['five_seconds'] = array(
-			'interval' => 5,
-			'display'  => esc_html__( 'Every Five Seconds' ),
-		);
-		$schedules['one_minute']   = array(
-			'interval' => 60,
-			'display'  => esc_html__( 'Every Sixty Seconds' ),
-		);
-		return $schedules;
-	}
 
+}
 
+function add_cron_intervals( $schedules ) {
+	$schedules['five_seconds'] = array(
+		'interval' => 5,
+		'display'  => esc_html__( 'Every Five Seconds' ),
+	);
+	$schedules['one_minute']   = array(
+		'interval' => 60,
+		'display'  => esc_html__( 'Every Sixty Seconds' ),
+	);
+	$schedules['five_minutes'] = array(
+		'interval' => 300,
+		'display'  => esc_html__( 'Every Five Minutes' ),
+	);
+	return $schedules;
 }
