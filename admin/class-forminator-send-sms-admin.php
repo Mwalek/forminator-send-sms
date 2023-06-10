@@ -44,13 +44,13 @@ class Forminator_Send_Sms_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of this plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 
 	}
 
@@ -99,5 +99,18 @@ class Forminator_Send_Sms_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/forminator-send-sms-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+	public function add_cron_intervals( $schedules ) {
+		$schedules['five_seconds'] = array(
+			'interval' => 5,
+			'display'  => esc_html__( 'Every Five Seconds' ),
+		);
+		$schedules['one_minute']   = array(
+			'interval' => 60,
+			'display'  => esc_html__( 'Every Sixty Seconds' ),
+		);
+		return $schedules;
+	}
+
 
 }

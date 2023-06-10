@@ -39,7 +39,7 @@ function create_db() {
 
 	global $wpdb;
 	$charset_collate = $wpdb->get_charset_collate();
-	$table_name = $wpdb->prefix . 'custom_data';
+	$table_name      = $wpdb->prefix . 'forminator_send_sms_data';
 
 	$sql = "CREATE TABLE $table_name (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -47,10 +47,13 @@ function create_db() {
 		name text(25) NOT NULL,
 		phone varchar(15) NOT NULL,
 		location varchar(2083) NOT NULL,
+		request text(25) NOT NULL,
 		message text(500) NOT NULL,
+		msg_status smallint(1) NOT NULL,
+		msg_sent_at datetime NOT NULL,
 		UNIQUE KEY id (id)
 	) $charset_collate;";
 
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	dbDelta( $sql );
 }

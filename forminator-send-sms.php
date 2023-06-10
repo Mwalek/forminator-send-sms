@@ -26,7 +26,8 @@
  */
 
 require __DIR__ . '/vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+require_once 'send-texts.php';
+$dotenv = Dotenv\Dotenv::createImmutable( __DIR__ );
 $dotenv->safeLoad();
 
 // If this file is called directly, abort.
@@ -46,8 +47,8 @@ define( 'FORMINATOR_SEND_SMS_VERSION', '1.0.0' );
 */
 
 $config = array(
-    'username' => $_ENV['Username'],
-    'password' => $_ENV['Password'],
+	'username' => $_ENV['Username'],
+	'password' => $_ENV['Password'],
 );
 
 /**
@@ -56,7 +57,7 @@ $config = array(
  */
 function activate_forminator_send_sms() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-forminator-send-sms-activator.php';
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 	Forminator_Send_Sms_Activator::activate();
 }
 
@@ -87,10 +88,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-forminator-send-sms.php';
  *
  * @since    1.0.0
  */
-function run_forminator_send_sms($config) {
+function run_forminator_send_sms( $config ) {
 
-	$plugin = new Forminator_Send_Sms($config);
+	$plugin = new Forminator_Send_Sms( $config );
 	$plugin->run();
 
 }
-run_forminator_send_sms($config);
+run_forminator_send_sms( $config );

@@ -66,7 +66,7 @@ class Forminator_Send_Sms {
 	 */
 	private $username;
 
-    /**
+	/**
 	 * The BulkSMS password.
 	 *
 	 * @since    1.0.0
@@ -84,14 +84,14 @@ class Forminator_Send_Sms {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct($config) {
+	public function __construct( $config ) {
 		if ( defined( 'FORMINATOR_SEND_SMS_VERSION' ) ) {
 			$this->version = FORMINATOR_SEND_SMS_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'forminator-send-sms';
-		extract($config);
+		extract( $config );
 		$this->username = $username;
 		$this->password = $password;
 
@@ -99,7 +99,7 @@ class Forminator_Send_Sms {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_job_hooks($config);
+		$this->define_job_hooks( $config );
 
 	}
 
@@ -183,6 +183,8 @@ class Forminator_Send_Sms {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'add_cron_intervals' );
+		add_action( 'fss_cron_hook', 'fss_cron_exec' );
 
 	}
 
@@ -202,12 +204,12 @@ class Forminator_Send_Sms {
 
 	}
 
-	private function define_job_hooks($config) {
+	private function define_job_hooks( $config ) {
 
 		$plugin_job = new Forminator_Send_Sms_Job( $this->get_plugin_name(), $this->get_version(), $config );
 
-		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_job, 'collect_form_data');
-		$this->loader->add_action( 'forminator_form_before_save_entry', $plugin_job, 'collect_form_data');
+		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_job, 'collect_form_data' );
+		$this->loader->add_action( 'forminator_form_before_save_entry', $plugin_job, 'collect_form_data' );
 
 	}
 
