@@ -210,7 +210,7 @@ class Forminator_Send_Sms {
 
 		$this->loader->add_action( 'forminator_form_after_handle_submit', $plugin_job, 'collect_form_data' );
 		$this->loader->add_action( 'forminator_form_before_save_entry', $plugin_job, 'collect_form_data' );
-
+		// $this->loader->add_action( 'fss_cron_hook', $plugin_job, 'fss_cron_exec' );
 	}
 
 	/**

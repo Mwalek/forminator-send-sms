@@ -4,6 +4,21 @@ $maps_int = WP_PLUGIN_DIR . '/maps-integration';
 
 require_once $maps_int . '/maps-integration.php';
 
+// add_filter( 'forminator_send_sms_prepare_form_data_for_cron', 'prep_cron_data', 10, 1 );
+
+// function prep_cron_data($data) {
+// return $data
+// }
+
+/*
+* The environment and accesss configurations
+*/
+
+$config = array(
+	'username' => $_ENV['Username'],
+	'password' => $_ENV['Password'],
+);
+
 if ( ! wp_next_scheduled( 'fss_cron_hook' ) ) {
 	wp_schedule_event( time(), 'one_minute', 'fss_cron_hook' );
 }
@@ -19,21 +34,39 @@ function fss_cron_exec() {
 	);
 
 	$location = new Manage_Location();
+	$sms_job  = new Forminator_Send_Sms_Job( 'forminator-send-sms', FORMINATOR_SEND_SMS_VERSION, $config );
 
 	foreach ( $results as $row ) {
+
+		if ( $row->msg_status ) {
+			ray( 'Message Group ID ' . $row->id . ' was already sent!' );
+			return;
+		}
 
 		$short_url = create_short_url( $row->location );
 
 		$url = ! is_wp_error( $short_url ) ? $short_url : $row->location;
 
-		ray( $location->use_maps_distance( $row->location ) )->red();
+		// ray( $location->use_maps_distance( $row->location ) )->red();
 
 		ray( $url )->purple();
 
-		$wpdb->update( $tablename, array( 'msg_status' => 3 ), array( 'name' => 'Elizabeth' ) );
+		$row->location = $url;
 
-		print_customer_name( $row->name );
+		$data = $location->prep_data( (array) $row );
 
+		ray( $data )->purple();
+
+		$response = $sms_job->collect_form_data_for_cron( $data );
+		ray( $response )->blue();
+
+		// Change message status to sent if the response is 201.
+		if ( 201 === $response['http_status'] ) {
+			$wpdb->update( $tablename, array( 'msg_status' => 1 ), array( 'id' => $row->id ) );
+			$wpdb->update( $tablename, array( 'msg_sent_at' => date( 'Y-m-d H:i:s' ) ), array( 'id' => $row->id ) );
+		} else {
+			ray( 'Message group not sent. The SMS server responded with ' . $response['http_status'] . '.' )->blue();
+		}
 	}
 
 	// ray( $this->request_data )->orange();
@@ -57,13 +90,11 @@ function create_short_url( $long_url ) {
 			),
 		)
 	);
-	ray( $redirect_res )->orange();
 	// Try to create a redirect.
 	if ( 200 === $redirect_res['response']['code'] ) {
 		$redirect_res['body'] = json_decode( $redirect_res['body'], true );
 		$new_redirect         = $redirect_res['body']['body']['items'][0];
 		$map_url              = 'https://nchito.day' . $new_redirect['url'];
-		ray( $map_url )->green();
 	} else {
 		$map_url = $long_url;
 	}

@@ -82,6 +82,8 @@ class Forminator_Send_Sms_Job {
 
 	public $custom_data;
 
+	private $outcome;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -116,6 +118,23 @@ class Forminator_Send_Sms_Job {
 		$this->loader = new Forminator_Send_Sms_Loader();
 	}
 
+	public function collect_form_data_for_cron( $data ) {
+
+		$this->username = $data[4]['username'];
+
+		$this->password = $data[4]['password'];
+
+		$messages = $this->organize_data( $data );
+		$result   = $this->prepare_data( $messages );
+
+		return $result;
+
+	}
+
+	public function get_outcome() {
+		return $this->outcome;
+	}
+
 	public function collect_form_data( $response ) {
 
 		// Do nothing if no filter is added to the data preparation hook.
@@ -126,6 +145,8 @@ class Forminator_Send_Sms_Job {
 		$custom_data = apply_filters( 'forminator_send_sms_prepare_form_data', $_POST );
 
 		$this->request_data = $_POST;
+
+		$this->save_data( $this->request_data );
 
 		$this->custom_data = $custom_data;
 
@@ -146,7 +167,8 @@ class Forminator_Send_Sms_Job {
 		// Prepare data for BulkSMS if the submitted form is on our list.
 		if ( in_array( $_POST['form_id'], $this->form_ids ) ) {
 
-			$this->organize_data( $custom_data );
+			$messages = $this->organize_data( $custom_data );
+			$result   = $this->prepare_data( $messages );
 
 		}
 
@@ -204,7 +226,6 @@ class Forminator_Send_Sms_Job {
 				}
 			}
 
-			$this->prepare_data( $messages );
 			ray( print_r( $messages, true ) );
 
 			return $messages;
@@ -217,11 +238,11 @@ class Forminator_Send_Sms_Job {
 
 	private function prepare_data( $messages ) {
 
-		ray( $this->request_data )->orange();
+		ray( $messages )->purple();
 
-		$this->save_data( $this->request_data );
+		$result = $this->send_data( json_encode( $messages ), 'https://api.bulksms.com/v1/messages?auto-unicode=true&longMessageMaxParts=30', $this->username, $this->password );
 
-		// $result = $this->send_data( json_encode( $messages ), 'https://api.bulksms.com/v1/messages?auto-unicode=true&longMessageMaxParts=30', $this->username, $this->password );
+		return $result;
 	}
 
 	 /**
@@ -261,9 +282,9 @@ class Forminator_Send_Sms_Job {
 		curl_setopt( $ch, CURLOPT_POST, 1 );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $post_body );
-		// Allow cUrl functions 20 seconds to execute
+		// Allow cUrl functions 20 seconds to execute.
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 20 );
-		// Wait 10 seconds while trying to connect
+		// Wait 10 seconds while trying to connect.
 		curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 10 );
 		$output                    = array();
 		$output['server_response'] = curl_exec( $ch );
